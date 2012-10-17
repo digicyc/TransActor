@@ -2,7 +2,8 @@
 TransActor
 ==========
 
-Demonstrating Akka's usage in a Payment Gateway transaction handler. 
+Demonstrating Akka's usage in a Payment Gateway transaction handler.
+Written in Java. 
 
 Transactions
 ------------
