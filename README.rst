@@ -1,11 +1,11 @@
-===========
+==========
 TransActor
 ==========
 
 Demonstrating Akka's usage in a Payment Gateway transaction handler. 
 
 Transactions
-------
+------------
  - Auth 
  - Credit
  - Settlement
