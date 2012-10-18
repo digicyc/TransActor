@@ -10,7 +10,7 @@ public class MyFutureActor extends UntypedActor {
   public void onReceive(Object message) throws Exception {
 
     if (message instanceof FastGreeting) {
-      System.out.println("Hello from THE FUTURE!" + ((FastGreeting) message).who);
+      System.out.println("[Future Msg]: " + ((FastGreeting) message).who);
       Long millisPause = Math.round(Math.random() * 200000) + 80000;
       Thread.sleep(millisPause);
     }

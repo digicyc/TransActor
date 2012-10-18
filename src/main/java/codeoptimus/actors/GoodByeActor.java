@@ -9,7 +9,7 @@ public class GoodByeActor extends UntypedActor {
   @Override
   public void onReceive(Object message) throws Exception {
     if (message instanceof GoodBye) {
-      System.out.println("Goodbye from: " + ((GoodBye) message).who);
+      System.out.println("[GoodBye Actor]: " + ((GoodBye) message).who);
       Long millisPause = Math.round(Math.random() * 800) + 200;
       Thread.sleep(millisPause);
     }

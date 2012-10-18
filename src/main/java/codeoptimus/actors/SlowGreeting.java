@@ -1,7 +1,19 @@
 package codeoptimus.actors;
 
 public class SlowGreeting {
-  public final String who;
+  private final String msg;
+  private final ActorStop actorStop;
 
-  public SlowGreeting(String who) { this.who = who; } 
+  public SlowGreeting(String msg, ActorStop actorStop) {
+      this.msg = msg;
+      this.actorStop = actorStop;
+  }
+
+  public String getMsg() {
+      return msg;
+  }
+
+  public ActorStop getActorStop() {
+      return actorStop;
+  }
 }
