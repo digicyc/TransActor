@@ -6,8 +6,8 @@ import akka.actor.Props;
 
 import java.io.Serializable;
 
-import codeoptimus.future.FutureProc;
-import codeoptimus.actors.*;
+import codeoptimus.trans.*;
+import codeoptimus.actors.TransActor;
 
 
 public class App implements Serializable {

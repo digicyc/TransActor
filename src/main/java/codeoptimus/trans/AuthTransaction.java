@@ -1,4 +1,4 @@
-package codeoptimus.actors;
+package codeoptimus.trans;
 
 public class AuthTransaction {
   private final String msg;

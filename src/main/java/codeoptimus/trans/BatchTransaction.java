@@ -1,4 +1,4 @@
-package codeoptimus.actors;
+package codeoptimus.trans;
 
 public class BatchTransaction {
   public final String who;

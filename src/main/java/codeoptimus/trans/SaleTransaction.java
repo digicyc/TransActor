@@ -1,4 +1,4 @@
-package codeoptimus.actors;
+package codeoptimus.trans;
 
 public class SaleTransaction {
     public final String msg;

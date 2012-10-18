@@ -2,6 +2,7 @@ package codeoptimus.actors;
 
 import akka.actor.*;
 import codeoptimus.FakeWork;
+import codeoptimus.trans.BatchTransaction;
 
 public class GoodByeActor extends UntypedActor {
 

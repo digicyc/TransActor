@@ -3,6 +3,9 @@ package codeoptimus.actors;
 import akka.actor.*;
 import codeoptimus.FakeWork;
 import codeoptimus.future.FutureProc;
+import codeoptimus.trans.ActorStop;
+import codeoptimus.trans.AuthTransaction;
+import codeoptimus.trans.SaleTransaction;
 
 public class TransActor extends UntypedActorWithStash {
     private Boolean isOpen = true;
@@ -11,7 +14,7 @@ public class TransActor extends UntypedActorWithStash {
     public void onReceive(Object message) {
         if (message instanceof SaleTransaction) {
             SaleTransaction saleTransaction = (SaleTransaction) message;
-            System.out.println("\t -> [SaleTransaction Count]: " + saleTransaction.getMsg());
+            System.out.println("\t --> [SaleTransaction Complete]: [" + saleTransaction.getMsg() + "]");
             Long millisPause = Math.round(Math.random() * 4000) + 1000;
             try {
                 Thread.sleep(millisPause);
@@ -20,7 +23,7 @@ public class TransActor extends UntypedActorWithStash {
         } else if (message instanceof AuthTransaction) {
 
             AuthTransaction authTransaction = (AuthTransaction) message;
-            System.out.println("\t -> [AuthTransaction Count]: " + authTransaction.getMsg());
+            System.out.println("\t --> [AuthTransaction Complete]: [" + authTransaction.getMsg() + "]");
             FakeWork.fakeWork(8000);
 
         } else if (message instanceof ActorStop) {
@@ -44,13 +47,14 @@ public class TransActor extends UntypedActorWithStash {
                     stash();
                     FakeWork.fakeWork(80000);
                 }
-            } else {
-                if (message.equals("unstash")) {
-                    isOpen = true;
-                    System.out.println("Unstash our MailBox");
-                    System.out.println("\t[-] >>>>>>>>");
-                    unstashAll();
-                }
+            }
+
+            if (message.equals("unstash")) {
+                System.out.println("Unstash our MailBox");
+                System.out.println("\t[-] >>>>>>>>");
+                unstashAll();
+            } else if (message.equals("stash") && !isOpen) {
+                System.out.println("You already did a Stash.. no need to do it twice in a row.");
             }
         }
     }

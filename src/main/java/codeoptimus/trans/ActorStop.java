@@ -1,4 +1,4 @@
-package codeoptimus.actors;
+package codeoptimus.trans;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
