@@ -11,82 +11,43 @@ import codeoptimus.actors.*;
 
 
 public class App implements Serializable {
-  private final static int JOBCOUNT = 10;
-  private ActorSystem system = ActorSystem.create("ActorSystem");
+    private final static int JOBCOUNT = 15;
+    private ActorSystem system = ActorSystem.create("ActorSystem");
 
-  public static void main(String[] args) {
-    App app = new App();
+    public static void main(String[] args) {
+        App app = new App();
 
-    try {
-      //System.out.println("\n####### RUNNING FUTURES #########\n");
-      //app.futureMsgBlaster("FUTURE #"); // This blocks all others from starting.
-      //System.out.println("\n####### RUNNING GOODBYE #########\n");
-      //app.goodbye("じゃあまた");
-      System.out.println("\n####### RUNNING FAST ACTOR #########\n");
-      app.fastMsgBlaster("SUPER MSG BLASTER!@#!@#!@");
-      System.out.println("\n####### RUNNING SLOW ACTOR #########\n");
-      app.slowMsgBlaster("SLOWWWWWWW Actor");
-    } catch (Exception e) { }
-  }
-
-  /**
-   *  Handle our Actor with a future response.
-   *  This blocks.
-   */
-  public void futureMsgBlaster(String msg) throws Exception {
-      FutureProc fProc = new FutureProc();
-      MyResponse resp = fProc.processFuture(msg);
-
-      System.out.println("FROM THE FUTURE: ["+resp.getResult()+"]");
-  }
-
-    /**
-     * Blast messages at a Faster Rate.
-     * @param msg Message to send.
-     * @throws Exception
-     */
-  public void fastMsgBlaster(String msg) throws Exception {
-    ActorRef greeter = system.actorOf(new Props(GreetingActor.class).withDispatcher("my-custom-dispatcher"),
-            "msgblaster");
-
-    for(int i = 0; i <= JOBCOUNT; i++) {
-      Integer iMsg = new Integer(i);
-      greeter.tell(new FastGreeting(iMsg.toString()));
-    }   
-  }
-
-    /**
-     * Blast messages at a Super slow Rate.
-     * Also here is where we do a Graceful stop on the msgblaster actor(s).
-     * @param msg Message to blast.
-     * @throws Exception
-     */
-  public void slowMsgBlaster(String msg) throws Exception {
-    ActorRef greeter = system.actorOf(new Props(GreetingActor.class).withDispatcher("my-custom-dispatcher"),
-            "slowmsgblaster");
-    ActorRef fastgreeter = system.actorFor("msgblaster");
-
-     // This blasts through and sends tells super quick and leaves out.
-    for(int i = 0; i <= JOBCOUNT; i++) {
-      Integer iMsg = new Integer(i);
-
-      greeter.tell(new SlowGreeting(iMsg.toString(), new ActorStop(system, fastgreeter)));
-
+        try {
+            System.out.println("Run our Chains of Transactions.");
+            app.transBlaster();
+        } catch (Exception e) {
+            System.out.println("Unable to process our Transactions. \n[Excp]: " + e);
+        }
     }
-  }
 
-    /**
-     * Demonstrate a different Actor Class on a new Actor Reference branch.
-     * @param msg Message to blast.
-     * @throws Exception
-     */
-  public void goodbye(String msg) throws Exception {
-    ActorSystem system = ActorSystem.create("ActorSystem");
-    ActorRef waver = system.actorOf(new Props(GoodByeActor.class), "goodbyemsg");
+    public void transBlaster() throws Exception {
+        ActorRef myActor = system.actorOf(new Props(TransActor.class).withDispatcher("my-custom-dispatcher"),
+                "greetingactor");
 
-    for(int i = 0;i<=30;i++) {
-      String finalMsg = msg + "[" + i + "]";
-      waver.tell(new GoodBye(finalMsg));
+        for (int i = 0; i <= JOBCOUNT; i++) {
+            Integer iMsg = new Integer(i);
+            // Fake the getting of Transactions
+            FakeWork.fakeWork();
+            System.out.printf("[%s] Recieved a Transaction. Send to Process!\n", iMsg.toString());
+
+            if (i == 5) {
+                myActor.tell("stash");
+                System.out.println("\tXXXXXXXX STASH CALLED! XXXXXXXXXXX\n");
+                // TODO: Process a settlement
+            }
+            if ((i % 2) == 0) {
+                myActor.tell(new AuthTransaction(iMsg.toString()));
+            } else {
+                myActor.tell(new SaleTransaction(iMsg.toString()));
+            }
+            if (i == 8) {
+                myActor.tell("unstash");
+            }
+        }
     }
-  }
 }

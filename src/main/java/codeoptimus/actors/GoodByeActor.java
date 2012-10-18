@@ -1,17 +1,15 @@
 package codeoptimus.actors;
 
 import akka.actor.*;
-import akka.event.Logging;
-import akka.event.LoggingAdapter;
+import codeoptimus.FakeWork;
 
 public class GoodByeActor extends UntypedActor {
 
-  @Override
-  public void onReceive(Object message) throws Exception {
-    if (message instanceof GoodBye) {
-      System.out.println("[GoodBye Actor]: " + ((GoodBye) message).who);
-      Long millisPause = Math.round(Math.random() * 800) + 200;
-      Thread.sleep(millisPause);
+    @Override
+    public void onReceive(Object message) {
+        if (message instanceof BatchTransaction) {
+            System.out.println("[BatchTransaction Actor]: " + ((BatchTransaction) message).who);
+            FakeWork.fakeWork();
+        }
     }
-  }
 }

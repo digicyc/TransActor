@@ -1,18 +1,16 @@
 package codeoptimus.actors;
 
 import akka.actor.*;
-import akka.event.Logging;
-import akka.event.LoggingAdapter;
+import codeoptimus.FakeWork;
 
 public class MyFutureActor extends UntypedActor {
 
   @Override
-  public void onReceive(Object message) throws Exception {
+  public void onReceive(Object message) {
 
-    if (message instanceof FastGreeting) {
-      System.out.println("[Future Msg]: " + ((FastGreeting) message).who);
-      Long millisPause = Math.round(Math.random() * 200000) + 80000;
-      Thread.sleep(millisPause);
+    if (message instanceof SaleTransaction) {
+      System.out.println("[Future Msg]: " + ((SaleTransaction) message).getMsg());
+      FakeWork.fakeWork(200000);
     }
   }
 }
