@@ -6,9 +6,11 @@ package codeoptimus;
  */
 
 public class FakeWork {
+    private static final Integer addNum = 1000;
+
     public static Long fakeWork(Integer baseNum) {
         try {
-            Long fakeTime = Math.round(Math.random() * baseNum) + 1000;
+            Long fakeTime = Math.round(Math.random() * baseNum) + addNum;
             Thread.sleep(fakeTime);
 
             return fakeTime;

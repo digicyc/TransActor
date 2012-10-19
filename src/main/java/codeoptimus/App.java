@@ -6,6 +6,9 @@ import akka.actor.Props;
 
 import java.io.Serializable;
 
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
+import codeoptimus.future.FutureProc;
 import codeoptimus.trans.*;
 import codeoptimus.actors.TransActor;
 
@@ -13,12 +16,13 @@ import codeoptimus.actors.TransActor;
 public class App implements Serializable {
     private final static int JOBCOUNT = 15;
     private ActorSystem system = ActorSystem.create("ActorSystem");
+    private LoggingAdapter log = Logging.getLogger(system, this);
 
     public static void main(String[] args) {
         App app = new App();
 
         try {
-            System.out.println("Run our Chains of Transactions.");
+            System.out.println("\nRun our Chains of Transactions.\n");
             app.transBlaster();
         } catch (Exception e) {
             System.out.println("Unable to process our Transactions. \n[Excp]: " + e);
@@ -30,23 +34,21 @@ public class App implements Serializable {
                 "greetingactor");
 
         for (int i = 0; i <= JOBCOUNT; i++) {
-            Integer iMsg = new Integer(i);
+            Integer iMsg = i;
             // Fake the getting of Transactions
             FakeWork.fakeWork();
             System.out.printf("[%s] Recieved a Transaction. Send to Process!\n", iMsg.toString());
 
             if (i == 5) {
-                myActor.tell("stash");
-                System.out.println("\tXXXXXXXX STASH CALLED! XXXXXXXXXXX\n");
-                // TODO: Process a settlement
+                FutureProc fProc = new FutureProc();
+                MyResponse resp = fProc.processFuture("FROM THE FUTURE", system);
+                System.out.println(resp.getResult());
             }
             if ((i % 2) == 0) {
-                myActor.tell(new AuthTransaction(iMsg.toString()));
+                ActorRef actorRef = system.actorFor("akka://ActorSystem/user/greetingactor");
+                actorRef.tell(new AuthTransaction(iMsg.toString()));
             } else {
                 myActor.tell(new SaleTransaction(iMsg.toString()));
-            }
-            if (i == 8) {
-                myActor.tell("unstash");
             }
         }
     }

@@ -3,6 +3,8 @@ package codeoptimus.future;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.dispatch.*;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import akka.util.Duration;
 
 import java.util.concurrent.Callable;
@@ -17,40 +19,45 @@ import codeoptimus.MyResponse;
 
 public class FutureProc {
     private final static int LOOPCOUNT = 10;
+    private final ActorSystem system;
+    private final LoggingAdapter log;
+
+    public FutureProc(ActorSystem system) {
+        this.system = system;
+        log = Logging.getLogger(system, this);
+    }
 
     public MyResponse processFuture(String msg) throws Exception {
-        ActorSystem system = ActorSystem.create("ActorSystem");
         String result = "";
 
         for (int i = 0; i <= LOOPCOUNT; i++) {
-            final String finalMsg = msg + ": " + i;
-
             // Use a future directly.
             Future<String> f = future(new Callable<String>() {
                 public String call() {
                     Long millisPause = FakeWork.fakeWork(2000);
-                    System.out.println("Processing Future in: " + millisPause.toString());
+                    log.info("Processing Future in: " + millisPause.toString());
 
-                    return "Future Finished Processing ^_^";
+                    return "^_^ Future Finished Processing ^_^";
                 }
             }, system.dispatcher());
 
             result = (String) Await.result(f, Duration.create(10, SECONDS));
 
         }
+        // Boxup our result in a MyResponse object.
         return new MyResponse(result);
     }
 
     public void graceFulStopActors(ActorSystem system, ActorRef actorRef) {
 
-        System.out.println("Running a Graceful Stop on the Specified ActorRef.");
+        log.info("Running a Graceful Stop on the Specified ActorRef.");
 
         try {
             Future<Boolean> stopped = gracefulStop(actorRef, Duration.create(20, SECONDS), system);
             Await.result(stopped, Duration.create(30, SECONDS));
-            System.out.println("Actors all Stopped SUCCESSFULLY!");
+            log.info("Actors all Stopped SUCCESSFULLY!");
         } catch (Exception e) {
-            System.out.println("[X][X][X][X] Something went wrong with Graceful stopping: " + e);
+            log.info("[X][X][X][X] Something went wrong with Graceful stopping: " + e);
         }
     }
 }
