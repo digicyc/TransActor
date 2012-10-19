@@ -40,8 +40,8 @@ public class App implements Serializable {
             System.out.printf("[%s] Recieved a Transaction. Send to Process!\n", iMsg.toString());
 
             if (i == 5) {
-                FutureProc fProc = new FutureProc();
-                MyResponse resp = fProc.processFuture("FROM THE FUTURE", system);
+                FutureProc fProc = new FutureProc(system);
+                MyResponse resp = fProc.processFuture("FROM THE FUTURE");
                 System.out.println(resp.getResult());
             }
             if ((i % 2) == 0) {
