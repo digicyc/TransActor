@@ -1,4 +1,4 @@
-package codeoptimus;
+package codeoptimus.simulate;
 
 /**
  * Created with IntelliJ IDEA.

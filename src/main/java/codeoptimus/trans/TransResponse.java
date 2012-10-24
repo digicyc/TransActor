@@ -1,14 +1,14 @@
-package codeoptimus;
+package codeoptimus.trans;
 
-public class MyResponse {
+public class TransResponse {
   private String msg;
 
 
-  public MyResponse() { 
+  public TransResponse() {
     this.msg = "";
   }
 
-  public MyResponse(String msg) {
+  public TransResponse(String msg) {
     this.msg = msg;
   }
 

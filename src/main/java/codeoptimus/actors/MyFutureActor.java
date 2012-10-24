@@ -1,7 +1,7 @@
 package codeoptimus.actors;
 
 import akka.actor.*;
-import codeoptimus.FakeWork;
+import codeoptimus.simulate.FakeWork;
 import codeoptimus.trans.SaleTransaction;
 
 public class MyFutureActor extends UntypedActor {

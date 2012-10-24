@@ -13,12 +13,11 @@ import static akka.dispatch.Futures.future;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static akka.pattern.Patterns.gracefulStop;
 
-import codeoptimus.FakeWork;
-import codeoptimus.MyResponse;
+import codeoptimus.simulate.FakeWork;
+import codeoptimus.trans.TransResponse;
 
 
 public class FutureProc {
-    private final static int LOOPCOUNT = 10;
     private final ActorSystem system;
     private final LoggingAdapter log;
 
@@ -27,25 +26,19 @@ public class FutureProc {
         log = Logging.getLogger(system, this);
     }
 
-    public MyResponse processFuture(String msg) throws Exception {
-        String result = "";
+    public TransResponse processFuture(final String msg) throws Exception {
+        Future<String> f = future(new Callable<String>() {
+            public String call() {
+                Long millisPause = FakeWork.fakeWork(10000);
+                log.info("Processing Future LoadTime = " + millisPause.toString());
 
-        for (int i = 0; i <= LOOPCOUNT; i++) {
-            // Use a future directly.
-            Future<String> f = future(new Callable<String>() {
-                public String call() {
-                    Long millisPause = FakeWork.fakeWork(2000);
-                    log.info("Processing Future in: " + millisPause.toString());
+                return "["+msg+"][FUTURE] Returned!";
+            }
+        }, system.dispatcher());
+        FutureCallBack fCallBack = new FutureCallBack();
+        fCallBack.setCallback(f);
 
-                    return "^_^ Future Finished Processing ^_^";
-                }
-            }, system.dispatcher());
-
-            result = (String) Await.result(f, Duration.create(10, SECONDS));
-
-        }
-        // Boxup our result in a MyResponse object.
-        return new MyResponse(result);
+        return new TransResponse("++");
     }
 
     public void graceFulStopActors(ActorSystem system, ActorRef actorRef) {

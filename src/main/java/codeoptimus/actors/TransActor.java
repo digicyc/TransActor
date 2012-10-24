@@ -3,9 +3,8 @@ package codeoptimus.actors;
 import akka.actor.*;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import codeoptimus.FakeWork;
+import codeoptimus.simulate.FakeWork;
 import codeoptimus.future.FutureProc;
-import codeoptimus.trans.ActorStop;
 import codeoptimus.trans.AuthTransaction;
 import codeoptimus.trans.SaleTransaction;
 
@@ -33,7 +32,7 @@ public class TransActor extends UntypedActorWithStash {
             ActorStop actorStop = (ActorStop) message;
             stash();
 
-            FutureProc futureProc = new FutureProc();
+            FutureProc futureProc = new FutureProc(getContext().system());
             futureProc.graceFulStopActors(actorStop.getActorSystem(), actorStop.getActorRef());
             log.info("Simulating a Big PROCESS JOB.\n-_- *GRUNT*\n");
 
